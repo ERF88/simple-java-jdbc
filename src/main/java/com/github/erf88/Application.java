@@ -3,55 +3,57 @@ package com.github.erf88;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class App {
+public class Application {
 
+	private static Scanner reader;
+	private static CustomerDAO dao;
+	
 	public static void main(String[] args) throws SQLException {
 
-		CustomerDAO dao = new CustomerDAO();
+		dao = new CustomerDAO();
 		dao.createTable();
-		Integer choice = 0;
+		Integer op = 0;
 
-		while (choice != 6) {
-
+		do {
 			System.out.println("------------ MENU ------------");
-			System.out.println("1 - List customers");
-			System.out.println("2 - Find customer");
-			System.out.println("3 - Create customer");
-			System.out.println("4 - Update customer");
-			System.out.println("5 - Delete customer");
-			System.out.println("6 - Exit");
+			System.out.println("1 - FindAll customer");
+			System.out.println("2 - FindOne Customer");
+			System.out.println("3 - Create Customer");
+			System.out.println("4 - Update Customer");
+			System.out.println("5 - Delete Customer");
+			System.out.println("0 - Exit");
 			System.out.println("------------------------------");
 
-			Scanner scanner = new Scanner(System.in);
-			choice = scanner.nextInt();
+			op = reader.nextInt();
+			reader.nextLine();			
 
-			switch (choice) {
+			switch (op) {
 			case 1:
-				findAll(dao);
+				
+				findAll();
 				break;
 			case 2:
-				findOne(scanner, dao);
+				findOne();
 				break;
 			case 3:
-				create(scanner, dao);
+				create();
 				break;
 			case 4:
-				update(scanner, dao);
+				update();	
 				break;
 			case 5:
-				delete(scanner, dao);
-				break;
-			case 6:
-				choice = 6;
+				delete();							
 				break;
 			default:
 				System.out.println("Invalid Option");
+				break;
 			}
-
-		}
+			
+		} while (op != 0);
+		
 	}
 
-	private static void findAll(CustomerDAO dao) {
+	private static void findAll() {
 
 		System.out.println("Customers:");
 
@@ -61,11 +63,11 @@ public class App {
 		});
 	}
 
-	private static void findOne(Scanner scanner, CustomerDAO dao) {
+	private static void findOne() {
 
 		System.out.println("Enter customer Id:");
 		
-		Integer id = scanner.nextInt();
+		Integer id = reader.nextInt();
 		Customer customer = dao.findById(id);
 
 		if (customer != null) {
@@ -76,33 +78,33 @@ public class App {
 		}
 	}
 
-	private static void create(Scanner scanner, CustomerDAO dao) {
+	private static void create() {
 
 		System.out.println("Enter name:");
 
-		String name = scanner.next();
+		String name = reader.next();
 		dao.insert(new Customer(name));
 	}
 
-	private static void update(Scanner scanner, CustomerDAO dao) {
+	private static void update() {
 
 		System.out.println("Enter customer Id:");
-		Integer id = scanner.nextInt();
+		Integer id = reader.nextInt();
 
 		if (dao.exists(id)) {
 			System.out.println("Enter new customer name:");
 
-			String name = scanner.next();
+			String name = reader.next();
 			dao.update(id, new Customer(name));
 		} else {
 			System.out.println("Does not exists");
 		}
 	}
 
-	private static void delete(Scanner scanner, CustomerDAO dao) {
+	private static void delete() {
 
 		System.out.println("Enter customer Id:");
-		Integer id = scanner.nextInt();
+		Integer id = reader.nextInt();
 
 		if (dao.exists(id)) {
 			dao.remove(id);
